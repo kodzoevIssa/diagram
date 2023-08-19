@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>диаграмма</title>
+  </head>
+  <body>
+    <canvas
+      onclick="reboot(data)"
+      id="canvas"
+      width="500"
+      height="500"
+    ></canvas>
+    <script>
+      var data = [110, 68, 20, 30, 100, 120, 20, 20];
+
+      function reboot(arr) {
+        data = arr.map((elem) => {
+          elem = Math.random() * 100;
+          return Math.ceil(elem);
+        });
+        drawPieChart(data);
+      }
+
+      function drawPieChart(data) {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const total = data.reduce((sum, value) => sum + value, 0);
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        let startAngle = -Math.PI / 2;
+        const innerRadius = Math.min(centerX, centerY) * 0.2;
+        const minRadius = Math.min(centerX, centerY) * 0.6;
+        const maxRadius = Math.min(centerX, centerY);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        data.forEach((value, index) => {
+          const sliceAngle = (2 * Math.PI * value) / total;
+          const endAngle = startAngle + sliceAngle;
+          const color = `hsl(${(index * 45) % 360}, 70%, 50%)`;
+
+          ctx.beginPath();
+
+          const radius = minRadius + (value / total) * (maxRadius - minRadius);
+
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+
+          ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+          ctx.closePath();
+
+          ctx.fillStyle = color;
+          ctx.fill();
+
+          startAngle = endAngle;
+        });
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = "#1E1E1E";
+        ctx.fill();
+      }
+
+      drawPieChart(data);
+    </script>
+  </body>
+</html>
